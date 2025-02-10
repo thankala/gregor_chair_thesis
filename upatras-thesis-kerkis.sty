@@ -1,0 +1,92 @@
+\ProvidesPackage{upatras-thesis-kerkis}
+
+% Language Settings
+\usepackage[utf8]{inputenc}
+\usepackage[LGR, T1]{fontenc}
+\usepackage[main = greek, english]{babel}
+\usepackage{kerkis}
+\newcommand{\en}[1]{\foreignlanguage{english}{#1}}
+
+\usepackage{datetime}
+\usepackage{wrapfig}
+\usepackage{enumerate}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage[nottoc]{tocbibind}
+\usepackage{siunitx}
+\usepackage{subcaption}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{subfiles}
+\usepackage{amsmath}
+\usepackage{array,tabularx}
+\usepackage{chngcntr}
+\usepackage{afterpage}
+\usepackage{ulem}
+\usepackage{tikz}
+\usepackage{hyperref}
+\usepackage{csquotes}
+\usepackage[acronym]{glossaries}
+% \loadglsentries{library/glossary}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  filecolor=blue,
+  urlcolor=blue,
+  citecolor=blue,
+}
+
+\setlength{\parindent}{2em}
+\geometry{
+  a4paper,
+  total={170mm,257mm},
+  left=20mm,
+  top=20mm
+}
+
+
+% Bibliography Settings
+\usepackage[backend=biber, bibencoding=utf8,style=ieee]{biblatex}
+\addbibresource{library/bibliography.bib}
+\renewcommand{\bibfont}{\small} % Adjust the font size of the bibliography entries.
+
+% Fancy HDR
+\pagestyle{fancy}
+\newcommand{\creator}{github.com/thankala}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\renewcommand{\sectionmark}[1]{\markright{#1}{}}
+\fancyhf{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[RE]{\leftmark}
+\fancyhead[LO]{\rightmark}
+\setlength{\headheight}{14.49998pt}
+\newtheorem{theorem}{Θεώρημα}[section]
+
+
+% TikZ Settings
+\tikzset{
+    step node/.style={rectangle, minimum height=1cm, text centered, draw=black, rounded corners=5},
+    start/.style={circle, fill=black, minimum size=0.5cm},
+    arrow/.style={->, >=stealth, thick},
+    process/.style={rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black},
+    between/.style args={#1 and #2}{
+            at = ($(#1)!0.5!(#2)$)
+        }
+}
+\usetikzlibrary{calc, shapes.geometric, arrows}
+
+% Chapter Format
+\makeatletter
+\def\@makechapterhead#1{%
+  \vspace*{50\p@}% <----------------- Space from top of page to Chapter #
+  {\parindent \z@ \raggedright \normalfont
+    \ifnum \c@secnumdepth >\m@ne
+    \huge\bfseries \thechapter.\ % <-- Chapter # (without "Chapter")
+    \fi
+    \interlinepenalty\@M
+    #1\par\nobreak% <------------------ Chapter title
+    \vskip 40\p@% <------------------ Space between chapter title and first paragraph
+}}
+\makeatother
