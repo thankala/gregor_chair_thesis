@@ -11,17 +11,20 @@
 \newcommand{\lablarge}{ΕΡΓΑΣΤΗΡΙΟ ΣΥΣΤΗΜΑΤΩΝ ΥΠΟΛΟΓΙΣΤΩΝ}
 \newcommand{\me}{Αθάνασιου Καλαθέρη του Μιχαήλ}
 \newcommand{\nomme}{Αθανάσιος Καλαθέρης του Μιχαήλ}
+\newcommand{\nommesmall}{Αθανάσιος Καλαθέρης}
+\newcommand{\nommesmallenglish}{Athanasios Kalatheris}
 \newcommand{\studnum}{1019421}
 \newcommand{\keywords}{Λέξεις Κλειδιά}
-\newcommand{\monthyear}{Φεβρουάριος 2024}
+\newcommand{\monthyear}{Ιούλιος 2025}
 
 \newcommand{\supname}{Κλεάνθης Θραμπουλίδης}
+\newcommand{\supnameegnlish}{Kleanthis Thramboulidis}
 \newcommand{\suptitle}{Καθηγητής}
 \newcommand{\supdep}{Τμήμα Μηχανικών Υπολογιστών και Πληροφορικής}
 \newcommand{\supuni}{Πανεπιστήμιο Πατρών}
 
-\newcommand{\cosupname}{Ευθύμιος Χούσος}
-\newcommand{\cosuptitle}{Ομότιμος Καθηγητής}
+\newcommand{\cosupname}{Χρήστος Φείδας}
+\newcommand{\cosuptitle}{Καθηγητής}
 \newcommand{\cosupdep}{Τμήμα Ηλεκτρολόγων Μηχανικών και Τεχνολογίας Υπολογιστών}
 \newcommand{\cosupuni}{Πανεπιστήμιο Πατρών}
 
@@ -32,10 +35,6 @@
 
 
 % GLOSSARY
-\selectlanguage{english}
-\makeglossaries
-\input{library/glossary}
-
 
 % BEGIN DOCUMENT
 \begin{document}
@@ -83,9 +82,9 @@
 \renewcommand{\listtablename}{Ευρετήριο Πινάκων}
 \listoffigures{}
 \listoftables
-\selectlanguage{english}
-\printglossaries
-\selectlanguage{greek}
+% \selectlanguage{english}
+% \printglossaries
+% \selectlanguage{greek}
 \clearpage
 
 
@@ -102,11 +101,10 @@
 
 \input{chapters/introduction/main}
 \input{chapters/iot_and_cyberphysical/main}
-\input{chapters/virtualization/main}
+\input{chapters/private_cloud/main}
 \input{chapters/kubernetes/main}
 \input{chapters/case_study/main}
 \input{chapters/architecture/main}
-\input{chapters/apache_kafka/main}
 \input{chapters/kubernetes_utilization/main}
 \input{chapters/future_work/main}
 

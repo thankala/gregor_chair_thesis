@@ -1,4 +1,4 @@
-{   
+{
     "latex-workshop.latex.autoBuild.run": "onSave",
     "latex-workshop.latex.autoClean.run": "onBuilt",
     "latex-workshop.latex.outDir": "%DIR%/out",
@@ -11,7 +11,6 @@
                 "-interaction=nonstopmode",
                 "-file-line-error",
                 "-output-directory=%OUTDIR%",
-                // "--aux-directory=%OUTDIR%",
                 "%DOC%"
             ],
             "env": {}
@@ -24,18 +23,19 @@
                 "%DOCFILE%"
             ]
         },
-        // {
-        //     "name": "makeglossaries",
-        //     "command": "makeglossaries",
-        //     "args": [
-        //         "-d=%OUTDIR%",
-        //         "%DOCFILE%"
-        //     ]
-        //   }
+        {
+            "name": "makeglossaries",
+            "command": "makeglossaries",
+            "args": [
+                "-d",
+                "%OUTDIR%",
+                "%DOCFILE%"
+            ]
+        }
     ],
     "latex-workshop.latex.recipes": [
         {
-            "name": "pdflatex -> biber -> pdflatex * 2",
+            "name": "pdflatex -> biber -> pdflatex ^ 2",
             "tools": [
                 "pdflatex",
                 "biber",

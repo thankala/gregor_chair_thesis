@@ -151,7 +151,7 @@
         \begin{tikzpicture}[node distance=1.6cm]
             \node (start) [start] {};
             \node (free) [process, below of=start] {\en{Free}};
-            \node (at1) [process, below of=free] {\en{Assembly Task 1}};
+            \node (at1) [process, below of=free] {\en{AT1}};
 
             \draw [arrow] (start) -- (free);
             \draw [arrow] (free) -- (at1);
@@ -165,8 +165,8 @@
         \begin{tikzpicture}[node distance=1.6cm]
             \node (start) [start] {};
             \node (s1) [process, below of=start] {\en{S1}};
-            \node (at2) [process, below of=s1] {\en{Assembly Task 2}};
-            \node (at5) [process, below of=at2] {\en{Assembly Task 5}};
+            \node (at2) [process, below of=s1] {\en{AT2}};
+            \node (at5) [process, below of=at2] {\en{AT5}};
 
             \draw [arrow] (start) -- (s1);
             \draw [arrow] (s1) -- (at2);
@@ -181,7 +181,7 @@
         \begin{tikzpicture}[node distance=1.6cm]
             \node (start) [start] {};
             \node (s5) [process, below of=start] {\en{S5}};
-            \node (at6) [process, below of=s5] {\en{Assembly Task 6}};
+            \node (at6) [process, below of=s5] {\en{AT6}};
             \node (at78) [process, below of=at6] {\en{AT7 and AT8}};
             \node (comp) [process, below of=at78] {\en{Complete}};
 

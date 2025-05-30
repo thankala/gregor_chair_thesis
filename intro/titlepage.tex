@@ -1,23 +1,73 @@
+% \begin{titlepage}
+%   % Upper part of the page
+%   \begin{tabular}{@{}l@{\qquad}l@{}}
+%     \includegraphics[width= 0.2\textwidth]{images/University_of_Patras_(seal).png} & 
+%     \begin{minipage}[b]{0.8\textwidth}
+%       \raggedright
+%       {\LARGE \textbf{ΠΑΝΕΠΙΣΤΗΜΙΟ ΠΑΤΡΩΝ}}\\
+%       {\large \textbf{ΤΜΗΜΑ ΗΛΕΚΤΡΟΛΟΓΩΝ ΜΗΧΑΝΙΚΩΝ\\ΚΑΙ ΤΕΧΝΟΛΟΓΙΑΣ ΥΠΟΛΟΓΙΣΤΩΝ\\[0.5cm]}}
+%       \textbf{\divisionlarge} \\
+%       \textbf{\lablarge}\\
+%     \end{minipage}
+%   \end{tabular}
+%   \hfill \break
+%   \noindent \rule{\textwidth}{0.4pt}\\    
+%   \vfill
+%   \begin{center}
+%     \textbf{\LARGE \doctitle }\\
+%     \vfill
+
+%      % Middle part of the page
+%     {\LARGE{\shortdoctitle }}\\ [0.5cm]
+%     {\LARGE \textbf{\nomme} }\\[0.5cm]
+
+%     % Bottom of the page
+%     \vfill
+%     {\large \textbf{Επιβλέπων: \supname}}\\[0.5cm]
+%     \large{ \textbf{Πάτρα, \monthyear}}
+%   \end{center}
+% \end{titlepage}
+
 \begin{titlepage}
+  % Optional vertical space if you want to push content down a bit:
+  % \vspace*{2em}
+  
+  \begin{tabular}{@{}l@{\hspace{1cm}}l@{}}
+    % LOGO on the left
+    \includegraphics[width=0.2\textwidth]{images/University_of_Patras_(seal).png}
+    &
+    % University / Dept. / Lab info on the right
+    \begin{minipage}[b]{0.7\textwidth}
+      \raggedright
+      {\LARGE \bfseries ΠΑΝΕΠΙΣΤΗΜΙΟ ΠΑΤΡΩΝ}\\[0.5em]
+      {\large \bfseries ΤΜΗΜΑ ΗΛΕΚΤΡΟΛΟΓΩΝ ΜΗΧΑΝΙΚΩΝ ΚΑΙ ΤΕΧΝΟΛΟΓΙΑΣ ΥΠΟΛΟΓΙΣΤΩΝ}\\[1em]
+      {\bfseries \divisionlarge}\\
+      {\bfseries \lablarge}
+    \end{minipage}
+  \end{tabular}
+
+  % Horizontal rule after the top block
+  \vspace{1em}
+  \rule{\textwidth}{0.4pt}
+  \vspace{2em}
+
+  \vfill
+
+  % Centered middle and bottom parts
   \begin{center}
-    % Upper part of the page
-    {\large ΠΑΝΕΠΙΣΤΗΜΙΟ ΠΑΤΡΩΝ}\\
-    \large ΤΜΗΜΑ ΗΛΕΚΤΡΟΛΟΓΩΝ ΜΗΧΑΝΙΚΩΝ\\ΚΑΙ ΤΕΧΝΟΛΟΓΙΑΣ ΥΠΟΛΟΓΙΣΤΩΝ\\
-    {\Large \divisionlarge \\
-     \lablarge }\\[1cm]
-    \hfill \break
-    \includegraphics[width= 0.8\textwidth]{images/up_landscape.jpg}\\
-    \hfill \break
+    % Main title
+    {\LARGE \bfseries \doctitle}\\[2em]
 
-    \textbf{\LARGE \doctitle }\\[3cm]
-    {\uline{\LARGE{\shortdoctitle }}}\\ [0.5cm]
-
-    {\LARGE \textbf{\nomme} }\\[0.5cm]
-    % Bottom of the page
     \vfill
-    \uline{\large Επιβλέπων}\\[0.5cm]
-    \large \suptitle \, \supname, \supuni \\[1cm]
-    % \large{Αριθμός Διπλωματικής Εργασίας: }\hspace{3cm}
-    \large{Πάτρα, \monthyear}
+    % Subtitle or short title
+    {\Large \shortdoctitle}\\[1em]
+    % Author name
+    {\Large \bfseries \nomme}\\[0.5em]
+
+    \vfill % Push the rest down
+
+    % Supervisor and date at the bottom
+    {\Large \bfseries Επιβλέπων: \supname}\\[0.5em]
+    {\Large \bfseries Πάτρα, \monthyear}
   \end{center}
 \end{titlepage}
