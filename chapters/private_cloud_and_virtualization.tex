@@ -1,0 +1,552 @@
+%!TEX root = ../../main.tex
+
+\chapter{Ιδιωτικές Υποδομές και Εικονοποίηση}\label{ch:private_cloud_and_virtualization}
+
+Η εικονοποίηση (\en{virtualization}) αποτελεί μια θεμελιώδη τεχνολογία στον χώρο της πληροφορικής, επιτρέποντας τη δημιουργία πολλαπλών περιβαλλόντων (λειτουργικών συστημάτων ή εφαρμογών) πάνω σε μια κοινή φυσική υποδομή. Με αυτόν τον τρόπο, αξιοποιείται καλύτερα η διαθέσιμη υπολογιστική ισχύς, ενώ ταυτόχρονα παρέχονται δυνατότητες απομόνωσης, φορητότητας και ευελιξίας. Τα τελευταία χρόνια, ιδιαίτερη έμφαση δίνεται στις Εικονικές Μηχανές (\en{Virtual Machines}) και στα \en{containers}, δύο εναλλακτικές προσεγγίσεις εικονοποίησης που επιλύουν διαφορετικά προβλήματα και εξυπηρετούν διαφορετικές ανάγκες. Σε αυτό το κεφάλαιο, θα εξετάσουμε τις βασικές αρχές της εικονοποίησης, θα επικεντρωθούμε στα πλεονεκτήματα και τις προκλήσεις που σχετίζονται με τις \en{virtual machines} και τα \en{containers} και θα παρουσιάσουμε χαρακτηριστικές χρήσεις τους σε σύγχρονα περιβάλλοντα υπολογιστών και υποδομών \en{cloud}.
+
+\section{Εισαγωγή στην εικονοποίηση}
+
+Η εικονοποίηση (\en{virtualization}) είναι η διαδικασία διαχωρισμού των φυσικών πόρων (π.χ. \en{CPU}, μνήμη, αποθηκευτικός χώρος, δικτυακές διεπαφές) από τις λογικές λειτουργικές οντότητες που τους χρησιμοποιούν. Μέσα από ένα ενδιάμεσο επίπεδο λογισμικού, που συχνά ονομάζεται \en{hypervisor}, δημιουργούνται αυτόνομα, εικονικά περιβάλλοντα, τα οποία «νομίζουν» ότι έχουν πρόσβαση σε όλη την υποδομή. Ωστόσο, στην πραγματικότητα, το σύστημα ελέγχει και κατανέμει τους πόρους ανάλογα με τις ανάγκες και τις πολιτικές διαχείρισης.
+
+\subsection{Σύντομη ιστορική αναδρομή}
+
+Η πρώτη μορφή εικονοποίησης εμφανίστηκε στη δεκαετία του 1960 σε υπολογιστές \en{mainframe} της \en{IBM}, όπου οι χρήστες μοιράζονταν υπολογιστική ισχύ μέσω ξεχωριστών εικονικών περιβαλλόντων. Με την πάροδο του χρόνου και τη ραγδαία αύξηση της υπολογιστικής ικανότητας των \en{x86} αρχιτεκτονικών, η εικονοποίηση βγήκε από το πλαίσιο των κεντρικών υπολογιστών (\en{mainframes}) και έγινε προσιτή στα \en{servers} ευρείας χρήσης. Από τότε, έχουν αναπτυχθεί διαφορετικά μοντέλα και τεχνολογίες εικονοποίησης, με πιο δημοφιλείς υλοποιήσεις την εικονοποίηση επιπέδου λειτουργικού συστήματος (\en{OS-level virtualization}), τις \en{virtual machines} και, πιο πρόσφατα, τα \en{containers}.
+
+\subsection{Βασικές τεχνικές}
+
+\begin{itemize}
+  \item \textbf{Εικονοποίηση υλικού (\en{hardware-level virtualization})}: Χρησιμοποιεί έναν \en{hypervisor} (π.χ. \en{VMware ESXi}, \en{KVM}, \en{Hyper-V}) ο οποίος αναλαμβάνει τη δρομολόγηση των εντολών μεταξύ του φυσικού επεξεργαστή και των εικονικών μηχανών.
+  \item \textbf{Εικονοποίηση επιπέδου λειτουργικού συστήματος (\en{OS-level virtualization})}: Χρησιμοποιεί τις δυνατότητες του πυρήνα του λειτουργικού συστήματος για να δημιουργήσει πολλαπλά λογικά περιβάλλοντα, όπως συμβαίνει με τα \en{containers}.
+  \item \textbf{Παραλλαγές \en{paravirtualization}}: Εδώ το λειτουργικό σύστημα μέσα στην εικονική μηχανή (\en{guest OS}) είναι τροποποιημένο, ώστε να υποστηρίζει αποτελεσματικότερα τις λειτουργίες του \en{hypervisor}, όπως συμβαίνει στο \en{Xen}.
+\end{itemize}
+
+\section{Εικονικές Μηχανές (\en{Virtual Machines})}
+
+Οι εικονικές μηχανές (\en{virtual machines}) είναι μια παραδοσιακή μέθοδος εικονοποίησης, όπου ένας \en{hypervisor} προσφέρει ένα ολοκληρωμένο εικονικό \en{hardware} περιβάλλον σε κάθε \en{guest} λειτουργικό σύστημα. Αυτό σημαίνει ότι το \en{guest OS} πιστεύει πως «τρέχει» σε έναν πραγματικό υπολογιστή, με τη δική του \en{CPU}, τη δική του μνήμη, τους δίσκους του και άλλα περιφερειακά.
+
+\subsection{Δομή και λειτουργία}
+
+Σε ένα τυπικό σενάριο, ο \en{hypervisor} εγκαθίσταται απευθείας πάνω στο φυσικό υλικό (μοντέλο \en{bare-metal}). Παραδείγματα τέτοιων \en{hypervisors} είναι το \en{VMware ESXi}, το \en{Microsoft Hyper-V} και το \en{Xen}. Ο \en{hypervisor} διαχειρίζεται τους φυσικούς πόρους και τους κατανέμει στα διάφορα \en{guest OS}, τα οποία δεν έχουν άμεση πρόσβαση στο υλικό.
+
+Εναλλακτικά, μπορεί κανείς να χρησιμοποιήσει έναν \en{hypervisor} που εγκαθίσταται πάνω από ένα υπάρχον λειτουργικό σύστημα (μοντέλο \en{hosted}), όπως το \en{VirtualBox} ή το \en{VMware Workstation}. Σε αυτή την περίπτωση, το \en{host} λειτουργικό σύστημα διαμεσολαβεί για την πρόσβαση στο υλικό, ενώ ο \en{hypervisor} λειτουργεί ως μια εφαρμογή που προσφέρει τις υπηρεσίες εικονοποίησης.
+
+\subsection{Πλεονεκτήματα και μειονεκτήματα}
+
+\paragraph{Πλεονεκτήματα}
+\begin{itemize}
+  \item \textbf{Απομόνωση}: Κάθε \en{virtual machine} λειτουργεί εντελώς ανεξάρτητα από τις υπόλοιπες. Τυχόν σφάλματα ή επιθέσεις σε ένα \en{guest} δεν επηρεάζουν τους άλλους.
+  \item \textbf{Ευελιξία}: Μπορούν να εγκατασταθούν διαφορετικά λειτουργικά συστήματα (\en{Windows}, \en{Linux}, \en{BSD} κλπ.) στον ίδιο φυσικό \en{server}.
+  \item \textbf{Φορητότητα}: Οι εικονικές μηχανές μπορούν εύκολα να μεταφερθούν ή να αντιγραφούν από έναν \en{host} σε άλλο, επιτρέποντας απρόσκοπτη μετεγκατάσταση και ανάκτηση από βλάβες (\en{disaster recovery}).
+\end{itemize}
+
+\paragraph{Μειονεκτήματα}
+\begin{itemize}
+  \item \textbf{Υψηλότερη κατανάλωση πόρων}: Εφόσον κάθε \en{guest OS} «κουβαλά» το δικό του πυρήνα και ολοκληρωμένες βιβλιοθήκες, η κατανάλωση μνήμης και επεξεργαστικής ισχύος είναι σημαντική.
+  \item \textbf{Χρόνοι εκκίνησης}: Η εκκίνηση μιας \en{virtual machine} απαιτεί τη φόρτωση πλήρους λειτουργικού συστήματος, γεγονός που αυξάνει τους χρόνους εκκίνησης σε σχέση με άλλα μοντέλα εικονοποίησης.
+\end{itemize}
+
+\subsection{Χρήσεις και παραδείγματα}
+
+\begin{itemize}
+  \item \textbf{Παροχή υπηρεσιών \en{cloud}}: Πλατφόρμες όπως το \en{Amazon EC2}, το \en{Microsoft Azure} και το \en{Google Cloud} ξεκίνησαν προσφέροντας \en{virtual machines}, δίνοντας τη δυνατότητα στους πελάτες να «ενοικιάζουν» υπολογιστική ισχύ, εγκαθιστώντας ελεύθερα ό,τι λογισμικό επιθυμούν.
+  \item \textbf{Απομόνωση εφαρμογών υψηλής ασφαλείας}: Συχνά, κρίσιμες εφαρμογές ή περιβάλλοντα δοκιμών (\en{testing environments}) φιλοξενούνται σε ξεχωριστές \en{virtual machines} για να εξασφαλίζεται η ασφάλεια των δεδομένων.
+  \item \textbf{Περιβάλλοντα ανάπτυξης}: Οι προγραμματιστές αξιοποιούν εργαλεία όπως το \en{VirtualBox} ή το \en{VMware Workstation} για να δοκιμάζουν πολλαπλά λειτουργικά συστήματα στην ίδια φυσική μηχανή.
+\end{itemize}
+
+\section{\en{Containers}}
+
+Τα \en{containers} (ή «κοντέινερς») αποτελούν μια πιο ελαφριά μορφή εικονοποίησης. Αντί να δημιουργείται ένα πλήρες εικονικό \en{hardware} περιβάλλον για κάθε \en{guest}, τα \en{containers} μοιράζονται τον ίδιο πυρήνα (\en{kernel}) του λειτουργικού συστήματος, ενώ απομονώνουν τις διεργασίες και τις βιβλιοθήκες που απαιτούνται για την εκτέλεση εφαρμογών.
+
+\subsection{Βασικές αρχές και τεχνολογίες}
+
+Το κλειδί για τη λειτουργία των \en{containers} είναι η αξιοποίηση των δυνατοτήτων απομόνωσης (\en{namespaces}) και ελέγχου πόρων (\en{cgroups}) που προσφέρουν οι μοντέρνοι πυρήνες \en{Linux}. Αυτά επιτρέπουν σε κάθε \en{container} να διατηρεί το δικό του χώρο διεργασιών, δικτύου και συστήματος αρχείων, χωρίς να γνωρίζει την ύπαρξη άλλων \en{containers}.
+
+Μία από τις πιο διαδεδομένες πλατφόρμες για τη δημιουργία και τη διαχείριση \en{containers} είναι το \en{Docker}, το οποίο έχει γίνει συνώνυμο με την ορολογία των \en{containers}. Άλλες σχετικές τεχνολογίες περιλαμβάνουν το \en{LXC} (\en{Linux Containers}), το \en{Podman} και πλατφόρμες ενορχήστρωσης όπως το \en{Kubernetes}.
+
+\subsection{Πλεονεκτήματα και μειονεκτήματα}
+
+\paragraph{Πλεονεκτήματα}
+\begin{itemize}
+  \item \textbf{Ελαφρότητα}: Επειδή οι \en{containers} δεν περιέχουν ολόκληρο λειτουργικό σύστημα, το αποτύπωμά τους σε \en{CPU}, μνήμη και αποθηκευτικό χώρο είναι σημαντικά μικρότερο.
+  \item \textbf{Ταχύτητα}: Η εκκίνηση ενός \en{container} είναι ταχύτατη, καθώς δεν απαιτείται φόρτωση νέου πυρήνα. Επιπλέον, η ανάπτυξη νέων εκδόσεων εφαρμογών γίνεται με μεγαλύτερη ευκολία.
+  \item \textbf{Ευκολία μεταφοράς (\en{portability})}: Τα \en{containers} προσφέρουν ένα συνεπές περιβάλλον εκτέλεσης, επιτρέποντας στις εφαρμογές να «τρέχουν» χωρίς αλλαγές σε διαφορετικά συστήματα \en{Linux}, \en{Windows} ή \en{macOS} (με τη βοήθεια ειδικών μηχανισμών).
+\end{itemize}
+
+\paragraph{Μειονεκτήματα}
+\begin{itemize}
+  \item \textbf{Κοινός πυρήνας (\en{kernel})}: Όλοι οι \en{containers} μοιράζονται τον ίδιο πυρήνα. Επομένως, αν εντοπιστεί ένα κενό ασφαλείας σε αυτόν, επηρεάζονται όλα τα \en{containers}.
+  \item \textbf{Περιορισμοί σε \en{OS-level} διαφοροποιήσεις}: Δεδομένου ότι δεν υπάρχει ξεχωριστός πυρήνας, οι \en{containers} πρέπει να είναι συμβατοί με την έκδοση του πυρήνα του \en{host}. Αυτό περιορίζει τη δυνατότητα εκτέλεσης διαφορετικών λειτουργικών συστημάτων (π.χ. \en{Windows} σε \en{Linux} μηχανή).
+\end{itemize}
+
+\subsection{Χρήσεις και παραδείγματα}
+
+\begin{itemize}
+  \item \textbf{\en{Microservices}}: Οι σύγχρονες αρχιτεκτονικές \en{microservices} βασίζονται συχνά σε \en{containers}, αφού κάθε υπηρεσία πακετάρεται με τις βιβλιοθήκες της και τρέχει ανεξάρτητα.
+  \item \textbf{\en{Continuous Integration/Continuous Deployment (CI/CD)}}: Εργαλεία όπως το \en{Jenkins}, το \en{GitLab CI} και το \en{GitHub Actions} υποστηρίζουν \en{Docker containers} για να εξασφαλίσουν επαναληψιμότητα και σταθερή συμπεριφορά κατά τη φάση δοκιμών και ανάπτυξης.
+  \item \textbf{\en{Serverless} υποδομές}: Αν και τα \en{serverless} περιβάλλοντα κρύβουν την εσωτερική αρχιτεκτονική, πολλά από αυτά βασίζονται σε \en{containers} για την εκτέλεση των λειτουργιών (\en{functions}) των χρηστών.
+\end{itemize}
+
+\section{Σύγκριση \en{Virtual Machines} και \en{Containers}}
+
+Παρά το γεγονός ότι αμφότερες οι τεχνολογίες εντάσσονται στο πλαίσιο της εικονοποίησης (\en{virtualization}), υπάρχουν ουσιώδεις διαφορές μεταξύ \en{virtual machines} και \en{containers}. Στον Πίνακα~\ref{tab:vm_containers} παρουσιάζονται συνοπτικά ορισμένες βασικές διαφορές.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{p{0.3\textwidth} p{0.3\textwidth} p{0.3\textwidth}}
+    \hline
+    \textbf{Χαρακτηριστικό} & \textbf{\en{Virtual Machines}} & \textbf{\en{Containers}} \\
+    \hline
+    \textbf{Απομόνωση} & Πλήρης απομόνωση μέσω \en{hypervisor} & Απομόνωση σε επίπεδο \en{OS} (\en{namespaces}, \en{cgroups}) \\
+    \textbf{Μέγεθος} & Μεγαλύτερο, αφού περιέχει ολόκληρο \en{OS} & Μικρότερο, μόνο οι βιβλιοθήκες και οι εξαρτήσεις της εφαρμογής \\
+    \textbf{Κατανάλωση πόρων} & Υψηλότερη & Χαμηλότερη \\
+    \textbf{Εκκίνηση} & Αργή, απαιτεί φόρτωση λειτουργικού συστήματος & Γρήγορη, καθώς μοιράζεται τον πυρήνα του \en{host} \\
+    \textbf{Διαφορετικά λειτουργικά συστήματα} & Δυνατή εκτέλεση \en{Windows}, \en{Linux}, κλπ. στον ίδιο \en{host} & Όλοι οι \en{containers} πρέπει να είναι συμβατοί με τον πυρήνα του \en{host} \\
+    \hline
+  \end{tabular}
+  \caption{Συνοπτική σύγκριση \en{Virtual Machines} και \en{Containers}}
+  \label{tab:vm_containers}
+\end{table}
+
+Από τα παραπάνω γίνεται σαφές ότι οι \en{virtual machines} είναι μια πιο «βαριά» αλλά και πιο γενική λύση, αφού υποστηρίζουν πλήρως διαφορετικά λειτουργικά συστήματα και αυξημένα επίπεδα απομόνωσης. Αντίθετα, τα \en{containers} προσφέρουν ταχύτητα, ευελιξία και ελαφρότητα, με βασική προϋπόθεση ότι μοιράζονται κοινό πυρήνα λειτουργικού συστήματος.
+
+\section{Προκλήσεις και τάσεις}
+
+\subsection{Ασφάλεια (\en{Security})}
+
+Οι ανησυχίες γύρω από την ασφάλεια αυξάνονται καθώς όλο και περισσότερες υποδομές βασίζονται σε εικονικά περιβάλλοντα. Στις \en{virtual machines}, ένας επιτιθέμενος που αποκτά πρόσβαση σε μια \en{guest} μπορεί θεωρητικά να προσπαθήσει να «αποδράσει» στο επίπεδο του \en{hypervisor}, ενώ στους \en{containers}, η κοινή χρήση του πυρήνα καθιστά τον έλεγχο ασφάλειας του πυρήνα απολύτως κρίσιμο. Γι’ αυτό, οι διαχειριστές φροντίζουν να παρακολουθούν εκδόσεις πυρήνων, ενημερώσεις λογισμικού και πολιτικές πρόσβασης (\en{AppArmor}, \en{SELinux} κ.λπ.) για να περιορίσουν τους κινδύνους.
+
+\subsection{Διαχείριση κλίμακας (\en{Scalability})}
+
+Η μαζική ανάπτυξη εκατοντάδων ή χιλιάδων \en{containers} ή \en{virtual machines} σε περιβάλλοντα \en{cloud} επιτάσσει εξελιγμένες τεχνικές αυτοματισμού και ενορχήστρωσης (\en{orchestration}). Τα εργαλεία \en{Kubernetes}, \en{Docker Swarm} και \en{Mesos} παρέχουν δυνατότητες αυτόματης διαχείρισης (\en{autoscaling}), παρακολούθησης (\en{monitoring}) και κατανομής φόρτου (\en{load balancing}), καθιστώντας τη λειτουργία σύνθετων συστημάτων βιώσιμη σε μεγάλη κλίμακα.
+
+% \subsection{Υβριδικές προσεγγίσεις}
+
+% Σε πολλά σύγχρονα περιβάλλοντα, τα \en{containers} συνυπάρχουν με τις \en{virtual machines}. Για παράδειγμα, σε ένα \en{public cloud}, οι υπηρεσίες συνήθως τρέχουν σε \en{virtual machines}, ενώ εντός αυτών εκτελούνται \en{containers}. Αυτή η πολυεπίπεδη αρχιτεκτονική προσφέρει συνδυαστικά τα πλεονεκτήματα της απομόνωσης \en{hypervisor} με την ελαφρότητα και ευελιξία των \en{containers}.
+
+% \section{Σύνοψη}
+
+% Η εικονοποίηση (\en{virtualization}) αποτελεί κεντρικό πυλώνα στη σύγχρονη αρχιτεκτονική υποδομών \en{IT}, ενισχύοντας την αποτελεσματική διαχείριση πόρων και προσφέροντας δυνατότητες απομόνωσης και φορητότητας. Οι \en{virtual machines} (\en{VMs}) και τα \en{containers} αντιπροσωπεύουν δύο διαφορετικές, αλλά συμπληρωματικές, προσεγγίσεις εικονοποίησης. Οι \en{VMs} παρέχουν πλήρη απομόνωση και δυνατότητα εκτέλεσης διαφορετικών λειτουργικών συστημάτων στον ίδιο \en{host}, αποτελώντας μια καθιερωμένη λύση για πολλά περιβάλλοντα \en{cloud} και \en{on-premises}. Από την άλλη πλευρά, τα \en{containers} εισάγουν μια ταχύτατη, ελαφριά και ευέλικτη εναλλακτική, κατάλληλη κυρίως για εφαρμογές \en{microservices}, \en{CI/CD} ροές και περιπτώσεις όπου επιδιώκεται γρήγορη ανάπτυξη και απομόνωση εφαρμογών εντός κοινού πυρήνα.
+
+% Παρά τις επιμέρους προκλήσεις ασφαλείας και διαχείρισης, και οι δύο τεχνολογίες εξελίσσονται διαρκώς, υποβοηθούμενες από ένα πλούσιο οικοσύστημα εργαλείων ενορχήστρωσης, παρακολούθησης και αυτοματισμού. Στο μέλλον, η εικονική και η φυσική υποδομή αναμένεται να συνυπάρχουν σε ακόμη πιο πολύπλοκα, υβριδικά μοντέλα, παρέχοντας υποστήριξη για ποικίλα περιβάλλοντα, εφαρμογές και φόρτους εργασίας. Μέσα σε αυτό το τοπίο, η κατανόηση τόσο των \en{virtual machines} όσο και των \en{containers} παραμένει κομβική για την αποτελεσματική σχεδίαση και λειτουργία υπολογιστικών συστημάτων σε όλα τα επίπεδα της βιομηχανίας και της έρευνας.
+
+\chapter{\en{Kubernetes}}\label{ch:kubernetes}
+
+Το \en{Kubernetes} αποτελεί μία από τις πιο δημοφιλείς και ολοκληρωμένες πλατφόρμες ενορχήστρωσης (\en{orchestration}) και διαχείρισης εφαρμογών που εκτελούνται σε περιβάλλοντα \en{containers}, αλλά και σε συνδυασμό με \en{virtual machines}. Αναπτύχθηκε αρχικά από την \en{Google} και προσφέρθηκε ως έργο ανοιχτού κώδικα (\en{open-source}), με ισχυρή υποστήριξη από την κοινότητα. Σήμερα, έχει εξελιχθεί σε έναν από τους βασικότερους πυλώνες για την ανάπτυξη κατανεμημένων συστημάτων μεγάλης κλίμακας (\en{distributed systems}) και υποδομών \en{cloud}.
+
+Στο πλαίσιο των προηγούμενων κεφαλαίων, όπου εξετάστηκαν το \en{IoT} (\en{Internet of Things}), τα \en{CPS} (\en{Cyber-Physical Systems}) και οι τεχνολογίες εικονοποίησης (\en{virtual machines} και \en{containers}), το παρόν κεφάλαιο αναδεικνύει τον ρόλο του \en{Kubernetes} ως ενοποιημένη πλατφόρμα υλοποίησης, ενορχήστρωσης και διαχείρισης αυτών των υποσυστημάτων. Αναλυτικότερα, θα παρουσιαστούν οι βασικές αρχές του \en{Kubernetes}, η αρχιτεκτονική του, οι δυνατότητες ασφαλούς και κλιμακούμενης (\en{scalable}) ανάπτυξης εφαρμογών, καθώς και η σύνδεσή του με τις έννοιες του \en{IoT}, των \en{CPS} και των \en{VMs}.
+
+\section{Βασικές αρχές του \en{Kubernetes}}
+
+Το \en{Kubernetes} ακολουθεί μια αρχιτεκτονική \en{client-server}, όπου ένα κεντρικό \en{control plane} αναλαμβάνει τον έλεγχο πολλών \en{worker nodes}. Στο \en{control plane} περιλαμβάνονται διάφορες κρίσιμες υπηρεσίες, όπως ο \en{API server}, ο \en{scheduler} και οι \en{controllers}, ενώ στους \en{worker nodes} εκτελούνται τα πραγματικά φορτία εργασίας (\en{workloads}), δηλαδή οι \en{containers} ή οι \en{virtual machines}.
+
+% \selectlanguage{english}
+% \begin{center}
+% \begin{tikzpicture}[
+%     font=\small,
+%     node distance=1.5cm, % Adjust as needed
+%     >=stealth',
+%     every node/.style={draw, rectangle, rounded corners, align=center}
+% ]
+% % Control Panel
+% \coordinate (clusterCenter) at (0,0);
+% \node[fill=blue!10] (api) at (clusterCenter) {kube-apiserver};
+% \node[fill=blue!10, above=of api,xshift=3cm]     (ccm)       {cloud-controller-manager};
+% \node[fill=blue!10, above=of api,xshift=-3cm]     (kcm)       {kube-controller-manager};
+% \node[fill=blue!10, left=of api]      (etcd)      {etcd};
+% \node[fill=blue!10, right=of api]     (scheduler)        {scheduler};
+% \node[
+%     draw,
+%     dashed,
+%     rounded corners,
+%     label={[yshift=0.1cm]above:\textbf{Control Plane}},
+%     fit=(ccm)(api)(etcd)(kcm)(scheduler)
+% ] (cpbox) {};
+% \draw[<->] (api) -- (ccm);
+% \draw[->]  (api) -- (etcd);
+% \draw[->]  (scheduler) -- (api);
+% \draw[->]  (kcm) -- (api);
+
+% % Worker Node 1 (left)
+% \node[fill=green!10, below=of clusterCenter, xshift=-1.3cm]                  (kubeproxy1) {kube-proxy};
+% \node[fill=green!10, left=of kubeproxy1] (kubelet1) {kubelet};
+% \node[fill=green!10, below=of kubeproxy1]                (pods1)      {Pods};
+
+% \node[
+%     draw,
+%     dashed,
+%     rounded corners,
+%     label={[yshift=0.1cm]above:\textbf{Worker Node 1}},
+%     fit=(kubelet1)(kubeproxy1)(pods1)
+% ] (wn1box) {};
+
+% % Worker Node 2 (right)
+% \node[fill=green!10, below=of clusterCenter, xshift=1.3cm] (kubelet2) {kubelet};
+% \node[fill=green!10, right=of kubelet2]                  (kubeproxy2) {kube-proxy};
+% \node[fill=green!10, below=of kubeproxy2]                (pods2)      {Pods};
+
+% \node[
+%     draw,
+%     dashed,
+%     rounded corners,
+%     label={[yshift=0.1cm]above:\textbf{Worker Node 2}},
+%     fit=(kubelet2)(kubeproxy2)(pods2)
+% ] (wn2box) {};
+% \end{tikzpicture}
+% \end{center}
+% \begin{center}
+% \begin{tikzpicture}[
+%     font=\small,
+%     node distance=1.5cm, % Adjust as needed
+%     >=stealth',
+%     every node/.style={draw, rectangle, rounded corners, align=center}
+% ]
+
+% % 1) Place "cloud-controller-manager" at the origin (0,0)
+% \node[fill=blue!10] (api) at (0,0) {kube-apiserver};
+
+% % 2) Use relative positioning for other Control Plane nodes
+% \node[fill=blue!10, above=of api]     (ccm)       {cloud-controller-manager};
+% \node[fill=blue!10, left=3.2cm of api]      (etcd)      {etcd};
+% \node[fill=blue!10, right=3.2cm of api]     (cm)        {kube-controller-manager};
+% \node[fill=blue!10, right=of ccm]       (scheduler) {scheduler};
+
+% % 3) Dashed bounding box around Control Plane
+% \node[
+%     draw,
+%     dashed,
+%     rounded corners,
+%     label={[yshift=0.2cm]above:\textbf{Control Plane}},
+%     fit=(ccm)(api)(etcd)(cm)(scheduler)
+% ] (cpbox) {};
+
+% % 4) Reference coordinate at bottom center of Control Plane bounding box
+% \coordinate (cpcenter) at (cpbox.south);
+
+% % -------------------------------------------------------
+% % Worker Node 1 (left)
+% % -------------------------------------------------------
+% \node[fill=green!10, below=2cm of cpcenter, xshift=-5cm] (kubelet1) {kubelet};
+% \node[fill=green!10, right=of kubelet1]                  (kubeproxy1) {kube-proxy};
+% \node[fill=green!10, below=of kubeproxy1]                (pods1)      {Pods};
+
+% \node[
+%     draw,
+%     dashed,
+%     rounded corners,
+%     label={[yshift=0.2cm]above:\textbf{Worker Node 1}},
+%     fit=(kubelet1)(kubeproxy1)(pods1)
+% ] (wn1box) {};
+
+% % -------------------------------------------------------
+% % Worker Node 2 (right)
+% % -------------------------------------------------------
+% \node[fill=yellow!10, below=2cm of cpcenter, xshift=2cm] (kubelet2) {kubelet};
+% \node[fill=yellow!10, right=of kubelet2]                 (kubeproxy2) {kube-proxy};
+% \node[fill=yellow!10, below=of kubeproxy2]               (pods2)      {Pods};
+
+% \node[
+%     draw,
+%     dashed,
+%     rounded corners,
+%     label={[yshift=0.2cm]above:\textbf{Worker Node 2}},
+%     fit=(kubelet2)(kubeproxy2)(pods2)
+% ] (wn2box) {};
+
+% % -------------------------------------------------------
+% % Example arrows
+% % -------------------------------------------------------
+% \draw[<->] (api) -- (ccm);
+% \draw[->]  (api) -- (etcd);
+% \draw[->]  (scheduler) -- (api);
+% \draw[->]  (cm) -- (api);
+
+% \draw[->]  (kubelet1) -- (api);
+% \draw[<->] (kubelet2) -- (api);
+
+% % -------------------------------------------------------
+% % "Cluster" bounding box around EVERYTHING
+% % -------------------------------------------------------
+% \node[
+%     draw,
+%     thick,
+%     rounded corners,
+%     label={[yshift=0.4cm]above:\textbf{Cluster}},
+%     fit=(cpbox)(wn1box)(wn2box)
+% ] (clusterbox) {};
+
+% \end{tikzpicture}
+% \end{center}
+% \begin{center}
+% \begin{tikzpicture}[
+%     font=\small,
+%     node distance=1cm,
+%     >=stealth',
+%     every node/.style={draw, rectangle, rounded corners, align=center}
+% ]
+
+% % -------------------------------------------------------
+% % Control Plane components
+% % -------------------------------------------------------
+% \node[fill=blue!10] (ccm) {cloud-controller-manager};
+% \node[fill=blue!10, below=of ccm] (api) {kube-apiserver};
+% \node[fill=blue!10, left=of api] (etcd) {etcd};
+% \node[fill=blue!10, below=of api] (cm) {kube-controller-manager};
+% \node[fill=blue!10, left=of cm] (scheduler) {scheduler};
+
+% % Dashed bounding box around Control Plane
+% \node[
+%     draw,
+%     dashed,
+%     rounded corners,
+%     label={[yshift=0.2cm]above:\textbf{Control Plane}},
+%     fit=(api)(scheduler)(cm)(etcd)(ccm)
+% ] (cpbox) {};
+
+% % -------------------------------------------------------
+% % Reference coordinate at bottom center of Control Plane
+% % -------------------------------------------------------
+% \coordinate (cpcenter) at (cpbox.south);
+
+% % -------------------------------------------------------
+% % Worker Node 1 (left)
+% % -------------------------------------------------------
+% \node[fill=green!10, below=2cm of cpcenter, xshift=-3cm] (kubelet1) {kubelet};
+% \node[fill=green!10, right=of kubelet1] (kubeproxy1) {kube-proxy};
+% \node[fill=green!10, below=of kubeproxy1] (pods1) {Pods};
+
+% \node[
+%     draw,
+%     dashed,
+%     rounded corners,
+%     label={[yshift=0.2cm]above:\textbf{Worker Node 1}},
+%     fit=(kubelet1)(kubeproxy1)(pods1)
+% ] (wn1box) {};
+
+% % -------------------------------------------------------
+% % Worker Node 2 (right)
+% % -------------------------------------------------------
+% \node[fill=yellow!10, below=2cm of cpcenter, xshift=3cm] (kubelet2) {kubelet};
+% \node[fill=yellow!10, right=of kubelet2] (kubeproxy2) {kube-proxy};
+% \node[fill=yellow!10, below=of kubeproxy2] (pods2) {Pods};
+
+% \node[
+%     draw,
+%     dashed,
+%     rounded corners,
+%     label={[yshift=0.2cm]above:\textbf{Worker Node 2}},
+%     fit=(kubelet2)(kubeproxy2)(pods2)
+% ] (wn2box) {};
+
+% % % API Server
+% \draw[<->] (api) -- (ccm);
+% \draw[->] (api) -- (etcd);
+
+% % Scheduler
+% \draw[->] (scheduler) -- (api);
+
+% % Controller Manager
+% \draw[->] (cm) -- (api);
+
+% % Communication to kube-apiserver
+% \draw[->] (kubelet1) -- (api);
+% \draw[<->] (kubelet2) -- (api);
+
+% % -------------------------------------------------------
+% % "Cluster" bounding box around EVERYTHING
+% % -------------------------------------------------------
+% \node[
+%     draw,
+%     thick,
+%     rounded corners,
+%     label={[yshift=0.4cm]above:\textbf{Cluster}},
+%     fit=(cpbox)(wn1box)(wn2box)
+% ] (clusterbox) {};
+
+% \end{tikzpicture}
+% \end{center}
+% \begin{tikzpicture}[
+%     font=\small,
+%     node distance=1.3cm,
+%     auto,
+%     >=stealth',
+%     every node/.style={draw, rectangle, rounded corners, align=center}
+% ]
+
+% % -------------------------------------------------------
+% % Control Plane components
+% % -------------------------------------------------------
+% \node[fill=blue!10] (ccm) {cloud-controller-manager};
+% \node[fill=blue!10, below=of ccm] (api) {kube-apiserver};
+% \node[fill=blue!10, left=of api] (etcd) {etcd};
+% \node[fill=blue!10, below=of api] (cm) {kube-controller-manager};
+% \node[fill=blue!10, left=of cm] (scheduler) {scheduler};
+
+% % Dashed bounding box around Control Plane
+% \node[
+%     draw,
+%     dashed,
+%     rounded corners,
+%     label={[yshift=0.2cm]above:\textbf{Control Plane}},
+%     fit=(api)(scheduler)(cm)(etcd)(ccm)
+% ] (cpbox) {};
+
+% % -------------------------------------------------------
+% % Worker Node 1
+% % -------------------------------------------------------
+% \node[fill=green!10, below=1.5cm of cm] (kubelet1) {kubelet};
+% \node[fill=green!10, right=0.5cm of kubelet1] (kubeproxy1) {kube-proxy};
+% \node[fill=green!10, below=of kubeproxy1] (pods1) {Pods};
+
+% \node[
+%     draw,
+%     dashed,
+%     rounded corners,
+%     label={[yshift=0.2cm]above:\textbf{Worker Node 1}},
+%     fit=(kubelet1)(kubeproxy1)(pods1)
+% ] (wn1box) {};
+
+% % -------------------------------------------------------
+% % Worker Node 2
+% % -------------------------------------------------------
+% \node[fill=yellow!10, right=2.5cm of kubelet1] (kubelet2) {kubelet};
+% \node[fill=yellow!10, right=of kubelet2] (kubeproxy2) {kube-proxy};
+% \node[fill=yellow!10, below=of kubeproxy2] (pods2) {Pods};
+
+% \node[
+%     draw,
+%     dashed,
+%     rounded corners,
+%     label={[yshift=0.2cm]above:\textbf{Worker Node 2}},
+%     fit=(kubelet2)(kubeproxy2)(pods2)
+% ] (wn2box) {};
+
+% \node[
+%     draw,
+%     dashed,
+%     rounded corners,
+%     label={[yshift=0.2cm]above:\textbf{Cluster}},
+%     fit=(cpbox)(wn1box)(wn2box)
+% ] (cluster) {};
+% % -------------------------------------------------------
+% % Draw arrows to represent communication
+% % -------------------------------------------------------
+% % API Server
+% \draw[<->] (api) -- (ccm);
+% \draw[->] (api) -- (etcd);
+
+% % Scheduler
+% \draw[->] (scheduler) -- (api);
+
+% % Controller Manager
+% \draw[->] (cm) -- (api);
+
+% % Communication to kube-apiserver
+% \draw[->] (kubelet1) -- (api);
+% \draw[<->] (kubelet2) -- (api);
+
+% \end{tikzpicture}
+\selectlanguage{greek}
+
+\begin{itemize}
+  \item \textbf{\en{API server}}: Παρέχει το κεντρικό σημείο επικοινωνίας μέσω \en{REST} \en{API}, μέσω του οποίου οι χρήστες, τα \en{controllers} και ο \en{scheduler} αλληλεπιδρούν με το \en{Kubernetes} \en{cluster}.
+  \item \textbf{\en{etcd}}: Αποθηκεύει την κατάσταση (\en{state}) του \en{cluster}, π.χ. τις ρυθμίσεις (\en{configurations}) και τις προδιαγραφές των εφαρμογών.
+  \item \textbf{\en{scheduler}}: Αποφασίζει σε ποιον \en{worker node} θα εκτελεστούν οι \en{pods}, βάσει διαθεσιμότητας πόρων (\en{CPU}, μνήμη) και διαφόρων πολιτικών.
+  \item \textbf{\en{kube-controller-manager}}: Ελέγχουν και συντονίζουν τη «στοχευμένη» κατάσταση (\en{desired state}) με την «τρέχουσα» κατάσταση (\en{current state}). Για παράδειγμα, ένας \en{controller} εξασφαλίζει πως αν δηλωθούν 5 αντίγραφα (\en{replicas}) μιας εφαρμογής, θα εκτελούνται πάντοτε 5 \en{pods}.
+\end{itemize}
+
+Από την άλλη πλευρά, κάθε \en{worker node} φιλοξενεί:
+\begin{itemize}
+  \item Τον \textbf{\en{kubelet}}, ο οποίος επικοινωνεί με τον \en{API server} και αναλαμβάνει την υλοποίηση των εντολών στο τοπικό σύστημα.
+  \item Τον \textbf{\en{kube-proxy}}, υπεύθυνο για τους κανόνες δικτύωσης και την προώθηση (\en{forwarding}) της κίνησης στα σωστά \en{pods}.
+  \item Τον \textbf{\en{container runtime}} (\en{Docker}, \en{containerd} ή άλλο) για τη δημιουργία και εκτέλεση \en{containers}.
+\end{itemize}
+
+\section{\en{Pods}, \en{Services} και λοιποί πυρήνες μηχανισμοί}
+
+Στο \en{Kubernetes}, η μικρότερη μονάδα ανάπτυξης εφαρμογών είναι το \en{pod}. Ένα \en{pod} μπορεί να περιέχει έναν ή περισσότερους \en{containers}, οι οποίοι μοιράζονται το ίδιο \en{namespace} δικτύου και δίσκου (\en{volumes}). Πάνω από τα \en{pods}, ορίζονται έννοιες υψηλότερου επιπέδου, όπως το \en{Deployment} (εξασφαλίζει κλιμάκωση και ενημερώσεις χωρίς διακοπή) και το \en{StatefulSet} (για εφαρμογές που διατηρούν κατάσταση).
+
+Για τη δικτύωση, το \en{Kubernetes} χρησιμοποιεί τους \en{Services}, οι οποίοι προσφέρουν ένα σταθερό σημείο πρόσβασης (\en{cluster IP} ή \en{load balancer IP}), ανεξάρτητα από το πού εκτελούνται τα \en{pods} φυσικά. Επίσης, υπάρχουν μηχανισμοί όπως τα \en{Ingress controllers} για την παροχή \en{HTTPS} τερματισμού (\en{TLS termination}) και δρομολόγησης (\en{routing}) σε υπηρεσίες εφαρμογών.
+
+\subsection{Αποθήκευση (\en{Storage})}
+
+Για την επίμονη αποθήκευση δεδομένων (\en{persistent data}), το \en{Kubernetes} ορίζει τα \en{Persistent Volumes (PV)} και τα \en{Persistent Volume Claims (PVC)}. Οι εφαρμογές (\en{pods}) ζητούν αποθηκευτικό χώρο δημιουργώντας ένα \en{PVC}, ενώ ο διαχειριστής (ή ένας μηχανισμός \en{dynamic provisioning}) αντιστοιχίζει ένα \en{PV} στο αίτημα αυτό. Έτσι, οι εφαρμογές μπορούν να κρατούν δεδομένα ανεξαρτήτως του \en{node} όπου εκτελούνται.
+
+\subsection{Ασφάλεια (\en{Security})}
+
+Το \en{Kubernetes} διαθέτει πολλαπλά επίπεδα ασφάλειας:
+\begin{itemize}
+  \item \textbf{\en{Role-Based Access Control (RBAC)}}: Καθορίζει ποιοι χρήστες και ποιες υπηρεσίες έχουν δικαίωμα να εκτελούν συγκεκριμένες ενέργειες στο \en{API}.
+  \item \textbf{\en{Network Policies}}: Ορίζουν κανόνες για τη δικτυακή ροή (\en{ingress}, \en{egress}) σε επίπεδο \en{pod}, εμποδίζοντας τη μη εξουσιοδοτημένη επικοινωνία.
+  \item \textbf{\en{Pod Security}}: Επιτρέπει ή απαγορεύει τη χρήση ευαίσθητων προνομίων (\en{privileged}, \en{root}) ή την πρόσβαση σε κρίσιμα τμήματα του λειτουργικού συστήματος.
+\end{itemize}
+
+\section{\en{Kubernetes} και ενοποίηση με \en{containers}, \en{VMs}, \en{IoT} και \en{CPS}}
+
+\subsection{\en{Containers} και \en{Kubernetes}}
+
+Η πιο διαδεδομένη χρήση του \en{Kubernetes} αφορά την ενορχήστρωση εφαρμογών που εκτελούνται σε \en{containers}. Ανάμεσα στα δημοφιλέστερα \en{container runtimes} συναντάμε το \en{Docker} και το \en{containerd}. Το \en{Kubernetes} διευκολύνει:
+\begin{itemize}
+  \item \textbf{Αυτόματη κλιμάκωση} (\en{autoscaling}): Αύξηση ή μείωση του αριθμού \en{pods} βάσει μετρικών (\en{metrics}), όπως η χρήση \en{CPU} ή οι αιτήσεις \en{HTTP}.
+  \item \textbf{Αναβαθμίσεις χωρίς διακοπή} (\en{rolling updates}): Σταδιακή αντικατάσταση των \en{pods} με νέες εκδόσεις, διασφαλίζοντας τη συνεχή παροχή υπηρεσίας.
+  \item \textbf{Ανθεκτικότητα} (\en{resilience}): Σε περίπτωση σφάλματος κάποιου \en{pod} ή ολόκληρου \en{node}, το \en{Kubernetes} επανεκκινεί αυτόματα τα \en{pods} σε υγιείς κόμβους.
+\end{itemize}
+
+\subsection{\en{Virtual Machines} και \en{KubeVirt}}
+
+Παρά την έντονη έμφαση στους \en{containers}, κάποιες εφαρμογές ή περιπτώσεις χρήσης απαιτούν \en{virtual machines}. Το \en{KubeVirt} είναι ένα έργο ανοιχτού κώδικα που επιτρέπει την εκτέλεση \en{VMs} μέσα σε \en{Kubernetes}. Αυτό επιτυγχάνεται με την εισαγωγή \en{CRDs} (\en{Custom Resource Definitions}), μέσω των οποίων ορίζεται ένα \en{VirtualMachine} αντικείμενο στο \en{Kubernetes} \en{API}.
+
+Με αυτή τη μέθοδο:
+\begin{itemize}
+  \item \textbf{Υπάρχουσες \en{VM}-βασισμένες εφαρμογές} μπορούν να ενταχθούν στο \en{Kubernetes} οικοσύστημα, αξιοποιώντας τα οφέλη του (\en{autoscaling}, \en{monitoring}, \en{logging}).
+  \item \textbf{Μεταβατικά σενάρια} μεταξύ \en{VMs} και \en{containers} γίνονται εφικτά, χωρίς να αλλάξει δραστικά η αρχιτεκτονική των συστημάτων.
+  \item \textbf{Κοινή διαχείριση} πολιτικών, όπως η ασφάλεια και η δικτύωση, ενοποιείται για \en{pods} και \en{VMs}.
+\end{itemize}
+
+\subsection{\en{IoT} και \en{Edge Computing}}
+
+Στα περιβάλλοντα \en{IoT}, η κατανεμημένη επεξεργασία δεδομένων (\en{edge computing}) αποκτά ιδιαίτερη σημασία, καθώς μειώνει τους χρόνους απόκρισης (\en{latency}) και το κόστος δικτυακής μετάδοσης. Εργαλεία όπως το \en{k3s} και το \en{MicroK8s} επιτρέπουν την εγκατάσταση ενός ελαφρού \en{Kubernetes} \en{distribution} σε \en{edge devices} με περιορισμένους πόρους. Κατ’ αυτόν τον τρόπο, οι \en{IoT} συσκευές (\en{sensors}, \en{actuators}) μπορούν να επικοινωνούν με τοπικούς κόμβους, οι οποίοι τρέχουν συλλογισμούς (\en{analytics}, \en{filtering}) σε \en{containers} εντός ενός μικρού \en{Kubernetes} \en{cluster}.
+
+Παράλληλα, τα δεδομένα που προκύπτουν από την τοπική επεξεργασία μπορούν να προωθηθούν στο κεντρικό \en{cloud} \en{Kubernetes} \en{cluster}, το οποίο αναλαμβάνει περαιτέρω ανάλυση (\en{machine learning}, \en{big data analytics}) και αποθήκευση (\en{data warehousing}). Αυτή η λογική \en{edge-cloud} επιτρέπει στα \en{IoT} συστήματα να επεκταθούν πιο εύκολα, να αυτοματοποιηθούν και να κλιμακώσουν τις υπηρεσίες τους χωρίς να επιβαρύνουν τους κεντρικούς πόρους με μη επεξεργασμένα δεδομένα.
+
+\subsection{\en{Cyber-Physical Systems (CPS)}}
+
+Τα \en{CPS} χαρακτηρίζονται από την αλληλεπίδραση μεταξύ φυσικών διεργασιών και ψηφιακών υποδομών. Το \en{Kubernetes} βοηθάει σημαντικά στην αρχιτεκτονική των \en{CPS}, ιδιαίτερα όταν χρησιμοποιούνται επιμέρους υπηρεσίες (\en{microservices}) για τη συλλογή και επεξεργασία σημάτων από αισθητήρες ή τον έλεγχο ενεργοποιητών (\en{actuators}).
+
+Σε ορισμένες περιπτώσεις, τα \en{CPS} έχουν απαιτήσεις χαμηλής καθυστέρησης (\en{low-latency}) ή πραγματικού χρόνου (\en{real-time}). Παρότι το \en{Kubernetes} δεν σχεδιάστηκε για \en{hard real-time} εφαρμογές, υπάρχουν τροποποιημένοι πυρήνες \en{Linux} (\en{RT kernels}) και ειδικές ρυθμίσεις \en{scheduler} που μπορούν να βελτιώσουν την απόδοση. Έτσι, για συστήματα \en{soft real-time} ή ημι-αυτόνομες βιομηχανικές ροές, το \en{Kubernetes} μπορεί να προσφέρει μια ευέλικτη λύση ενορχήστρωσης και διαχείρισης.
+
+\section{Κλιμακούμενη ανάπτυξη και βέλτιστες πρακτικές}
+
+\subsection{\en{Autoscaling} μηχανισμοί}
+
+Το \en{Kubernetes} υποστηρίζει διάφορες στρατηγικές αυτόματης κλιμάκωσης (\en{autoscaling}):
+\begin{itemize}
+  \item \textbf{\en{Horizontal Pod Autoscaler (HPA)}}: Αυξομειώνει τον αριθμό των \en{pods} ενός \en{Deployment} ή \en{ReplicaSet} βάσει μετρικών (\en{CPU} / \en{memory} χρήση ή \en{custom metrics}).
+  \item \textbf{\en{Cluster Autoscaler}}: Αυτόματη προσθήκη ή αφαίρεση \en{nodes} σε ένα \en{cloud} περιβάλλον, αναλόγως με τις ανάγκες των \en{pods}.
+\end{itemize}
+Σε περιπτώσεις \en{IoT} ή \en{CPS}, όπου η ροή δεδομένων μπορεί να παρουσιάζει μεγάλες διακυμάνσεις, οι μηχανισμοί αυτοί εξασφαλίζουν την ομαλή ανταπόκριση του συστήματος.
+
+\subsection{\en{Rolling Updates} και \en{Canary Deployments}}
+
+Για τη συνεχή παράδοση (\en{continuous delivery}) αναβαθμίσεων χωρίς να διακόπτεται η λειτουργία, το \en{Kubernetes} χρησιμοποιεί \en{rolling updates}, αντικαθιστώντας σταδιακά τα παλιά \en{pods} με νέα. Επιπλέον, τεχνικές \en{canary deployment} επιτρέπουν τη δοκιμή νέων εκδόσεων σε μικρό ποσοστό χρηστών, προτού γενικευθούν σε όλο το σύστημα. Αυτό είναι ιδιαίτερα χρήσιμο όταν ενσωματώνονται αλγόριθμοι \en{machine learning} ή νέες λειτουργίες σε ευαίσθητα συστήματα \en{CPS}.
+
+\subsection{Παρακολούθηση (\en{Monitoring}) και καταγραφή (\en{Logging})}
+
+Η διαχείριση σύνθετων \en{Kubernetes} \en{clusters} απαιτεί κατάλληλα εργαλεία παρακολούθησης (\en{monitoring}) και καταγραφής (\en{logging}). Συνήθως, χρησιμοποιούνται λύσεις όπως το \en{Prometheus} για τη συλλογή μετρικών, σε συνδυασμό με τον \en{Grafana} για την οπτικοποίηση. Για την ενιαία καταγραφή (\en{logging}), δημοφιλή είναι τα \en{EFK} (\en{Elasticsearch}, \en{Fluentd}, \en{Kibana}) ή το \en{Loki} της \en{Grafana Labs}. Με αυτόν τον τρόπο, οι διαχειριστές εντοπίζουν γρήγορα σφάλματα ή δυσλειτουργίες, τόσο σε εφαρμογές \en{containers} όσο και σε \en{VMs} (μέσω \en{KubeVirt}).
+
+% \section{Παραδείγματα χρήσης}
+
+% \subsection{\en{Smart Factory} σε βιομηχανικό περιβάλλον \en{Industry 4.0}}
+
+% Μια εργοστασιακή μονάδα παραγωγής (\en{smart factory}) μπορεί να υλοποιήσει συλλογή δεδομένων και αυτοματισμούς (αισθητήρες \en{IoT}, ρομπότ \en{CPS}) σε \en{edge devices}, τα οποία τρέχουν ελαφριές διανομές \en{Kubernetes}. Τοπικά \en{containers} επεξεργάζονται τα δεδομένα (π.χ. συνάγουν τάσεις, εντοπίζουν σφάλματα) και αποστέλλουν προ-επεξεργασμένα αποτελέσματα προς ένα κεντρικό \en{Kubernetes} \en{cluster} στο \en{cloud}. Το κεντρικό σύστημα χρησιμοποιεί \en{machine learning} για προβλέψεις συντήρησης (\en{predictive maintenance}), ενώ παράλληλα ενδέχεται να τρέχει «παλαιότερες» κρίσιμες εφαρμογές (\en{legacy SCADA}) σε \en{VMs} μέσω \en{KubeVirt}.
+
+% \subsection{\en{Healthcare} και \en{wearable IoT}}
+
+% Σε νοσοκομεία ή στην κατ’ οίκον φροντίδα ασθενών, \en{wearable} συσκευές (\en{IoT}) συλλέγουν ζωτικές ενδείξεις (πίεση, καρδιακοί παλμοί, θερμοκρασία). Τα δεδομένα μεταφέρονται σε \en{edge gateways} (\en{k3s}) που εκτελούν βασικές αναλύσεις για την άμεση ειδοποίηση ιατρικού προσωπικού σε περίπτωση ανωμαλιών. Η περαιτέρω επεξεργασία γίνεται σε ένα κεντρικό \en{Kubernetes} \en{cluster}, όπου τρέχουν υπηρεσίες \en{machine learning} (σε \en{containers}) και πιθανόν ειδικά \en{VMs} για εφαρμογές ηλεκτρονικού φακέλου υγείας (\en{EHR systems}) μέσω \en{KubeVirt}. Έτσι συνδυάζεται η ελαφρότητα και ταχύτητα του \en{edge} με την υπολογιστική ισχύ του \en{cloud}.
+
+% \section{Συμπεράσματα}
+
+% Το \en{Kubernetes} έχει αναδειχθεί σε ένα από τα πιο ευρέως χρησιμοποιούμενα εργαλεία για την ανάπτυξη, ενορχήστρωση και διαχείριση εφαρμογών μεγάλης κλίμακας. Η ομαλή ενσωμάτωση με τις τεχνολογίες \en{containers}, η δυνατότητα χρήσης \en{virtual machines} μέσω του \en{KubeVirt}, καθώς και η συμβατότητα με περιβάλλοντα \en{IoT} και \en{CPS}, καθιστούν το \en{Kubernetes} μια ευέλικτη και ισχυρή πλατφόρμα.
+
+% Σε ό,τι αφορά τις σύγχρονες απαιτήσεις για υλοποίηση \en{smart} συστημάτων, είτε πρόκειται για βιομηχανική παραγωγή (\en{Industry 4.0}), συστήματα υγείας (\en{Healthcare}) ή έξυπνες πόλεις (\en{Smart Cities}), το \en{Kubernetes} προσφέρει τους απαραίτητους μηχανισμούς για αυτοματοποιημένη κλιμάκωση, ανθεκτικότητα σε σφάλματα και ευέλικτη ανάπτυξη. Παράλληλα, τα εργαλεία ασφαλείας (\en{RBAC}, \en{Network Policies}, \en{Pod Security}) μπορούν να θωρακίσουν ευαίσθητες εφαρμογές από επιθέσεις ή κακόβουλη χρήση.
+
+% Συνολικά, η επιλογή του \en{Kubernetes} ως κεντρικής πλατφόρμας ενορχήστρωσης επιτρέπει την ενοποίηση ποικίλων υποσυστημάτων: από \en{containers} και \en{VMs} μέχρι σύνθετα \en{IoT}/\en{CPS} περιβάλλοντα. Με τη συνεχή εξέλιξη του οικοσυστήματος (π.χ. το \en{KubeVirt}, \en{k3s}, \en{operators}), οι δυνατότητες διαρκώς επεκτείνονται, διευκολύνοντας τη μετάβαση σε μια δυναμική, αυτοματοποιημένη υποδομή, ικανή να ανταποκριθεί στις υψηλές απαιτήσεις της σύγχρονης πληροφορικής και βιομηχανίας.

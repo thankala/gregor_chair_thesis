@@ -18,22 +18,21 @@
 
 \vspace{10mm}
 
-Η παρούσα διπλωματική εργασία εξετάζει την αξιοποίηση υπηρεσιών ιδιωτικού \en{cloud} στο πλαίσιο του 
-Διαδικτύου των Αντικειμένων (\en{IoT}). Ειδικότερα, η εργασία επικεντρώνεται στη χρήση του \en{Kubernetes} 
-ως υποδομή ιδιωτικού \en{cloud} για την ανάπτυξη και διαχείριση μικροϋπηρεσιών (\en{microservices}) καθώς 
+Η παρούσα διπλωματική εργασία εξετάζει την αξιοποίηση υπηρεσιών ιδιωτικού \en{cloud} στο πλαίσιο του
+Διαδικτύου των Αντικειμένων (\en{IoT}). Ειδικότερα, η εργασία επικεντρώνεται στη χρήση του \en{Kubernetes}
+ως υποδομή ιδιωτικού \en{cloud} για την ανάπτυξη και διαχείριση μικροϋπηρεσιών (\en{microservices}) καθώς
 και πώς η ιδιωτική υποδομή αυτή θα μπορούσε να υλοποιηθεί σε ενα περιβαλλόν εργοστασίου. Στην συνέχεια
 σχεδιάστηκαν και υλοποιήθηκαν ένας αριθμός από μικρουπηρεσίες (\en{microservices}) με στόχο τον έλεγχο και την παρακολούθηση
-μιας γραμμής παραγωγής, επιδεικνύοντας την αποτελεσματικότητα και την ευελιξία που παρέχουν οι τεχνολογίες \en{cloud} σε 
+μιας γραμμής παραγωγής, επιδεικνύοντας την αποτελεσματικότητα και την ευελιξία που παρέχουν οι τεχνολογίες \en{cloud} σε
 βιομηχανικές εφαρμογές.
 
-Η καινοτομία του συστήματος έγκειται στη χρήση κυβερνοφυσικών \en{microservices}, οι οποίες αλληλεπιδρούν με ρομποτικούς βραχίονες 
-μέσω \en{HTTP requests}. Κάθε \en{microservice} αντιπροσωπεύει ένα συγκεκριμένο βήμα παραγωγής, επιτυγχάνοντας ουσιαστικό διαχωρισμό \en{(decoupling)} 
-ανάμεσα στη λογική των βημάτων και στους ρομποτικούς βραχίονες. Οι βραχίονες λειτουργούν ως απομακρυσμένα 
-\en{API endpoints} που εκτελούν την κίνηση ή τη διεργασία που ζητούν τα \en{microservices}, χωρίς να χρειάζεται 
-να γνωρίζουν οι ίδιοι τη σειρά ή τον τρόπο υλοποίησης των επιμέρους σταδίων. Επιπλέον, πραγματοποιήθηκε ενορχήστρωση 
-των υπηρεσιών \en{(service orchestration)} για τον συγχρονισμό και το συντονισμό των διαφορετικών βημάτων παραγωγής, 
+Η καινοτομία του συστήματος έγκειται στη χρήση κυβερνοφυσικών \en{microservices}, οι οποίες αλληλεπιδρούν με ρομποτικούς βραχίονες
+μέσω \en{HTTP requests}. Κάθε \en{microservice} αντιπροσωπεύει ένα συγκεκριμένο βήμα παραγωγής, επιτυγχάνοντας ουσιαστικό διαχωρισμό \en{(decoupling)}
+ανάμεσα στη λογική των βημάτων και στους ρομποτικούς βραχίονες. Οι βραχίονες λειτουργούν ως απομακρυσμένα
+\en{API endpoints} που εκτελούν την κίνηση ή τη διεργασία που ζητούν τα \en{microservices}, χωρίς να χρειάζεται
+να γνωρίζουν οι ίδιοι τη σειρά ή τον τρόπο υλοποίησης των επιμέρους σταδίων. Επιπλέον, πραγματοποιήθηκε ενορχήστρωση
+των υπηρεσιών \en{(service orchestration)} για τον συγχρονισμό και το συντονισμό των διαφορετικών βημάτων παραγωγής,
 διασφαλίζοντας την ομαλή και ευέλικτη ροή της διαδικασίας.
-
 
 \clearpage
 \selectlanguage{english}
@@ -55,18 +54,18 @@
 \end{center}
 \vspace{10mm}
 
-This thesis examines the utilization of private cloud services in the context of the Internet of Things (IoT). 
-Specifically, the study focuses on the use of Kubernetes as a private cloud infrastructure for the development 
-and management of microservices, as well as how this private infrastructure could be implemented within 
-a factory environment. Subsequently, a number of microservices were designed and implemented with the aim of controlling 
-and monitoring a production line, demonstrating the effectiveness and flexibility offered by cloud technologies in 
+This thesis examines the utilization of private cloud services in the context of the Internet of Things (IoT).
+Specifically, the study focuses on the use of Kubernetes as a private cloud infrastructure for the development
+and management of microservices, as well as how this private infrastructure could be implemented within
+a factory environment. Subsequently, a number of microservices were designed and implemented with the aim of controlling
+and monitoring a production line, demonstrating the effectiveness and flexibility offered by cloud technologies in
 industrial applications.
 
 The innovation of the system lies in the use of cyber-physical microservices, which interact with robotic arms
- via HTTP requests. Each microservice represents a specific production step, achieving substantial decoupling 
- between the logic of the steps and the robotic arms. The robotic arms function as remote API endpoints that execute the 
- movement or process requested by the microservices, without needing to know the sequence or the implementation details 
- of the individual stages themselves. In addition, service orchestration was implemented to 
- synchronize and coordinate the various production steps, ensuring a smooth and flexible workflow.
+via HTTP requests. Each microservice represents a specific production step, achieving substantial decoupling
+between the logic of the steps and the robotic arms. The robotic arms function as remote API endpoints that execute the
+movement or process requested by the microservices, without needing to know the sequence or the implementation details
+of the individual stages themselves. In addition, service orchestration was implemented to
+synchronize and coordinate the various production steps, ensuring a smooth and flexible workflow.
 
 \selectlanguage{greek}
